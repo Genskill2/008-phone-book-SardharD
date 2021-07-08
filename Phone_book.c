@@ -1,14 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
-const char *DB="directory.db";
-
-struct entry0 {
-  char name[20];
-  char phone[20];
-  struct entry0 *next;
-};
 
 typedef struct entry0 entry;
 
@@ -178,81 +168,4 @@ entry *load_entries(FILE *fp) {
       current->next = tmp;
     current = tmp;
   }
-  return ret;
-}
-
-void write_all_entries(entry * p) {
-  FILE *fp = fopen(DB, "w");
-  while (p != NULL) {
-    fprintf(fp, "%s,%s\n", p->name, p->phone);
-    p = p->next;
-  }
-  fclose(fp);
-}
-
-
-void add(char *name, char *phone) {
-  FILE *fp = fopen(DB, "a");
-  fprintf(fp, "%s,%s\n", name, phone);
-  fclose(fp);
-}
-
-void list(FILE *db_file) {
-  entry *p = load_entries(db_file);
-  entry *base = p;
-  int count=0;
-  while (p!=NULL) {
-    printf("%-20s : %10s\n", p->name, p->phone);
-    count++;
-    p=p->next;
-  }
-  /* TBD print total count */
-  printf("Total entries :  %d",count);
-  free_entries(base);
-}
-
-
-int delete(FILE *db_file, char *name) {
-  entry *p = load_entries(db_file);
-  entry *base = p;
-  entry *prev = NULL;
-  entry* del = NULL ; /* Node to be deleted */
-  int deleted = 0;
-  while (p!=NULL) {
-    if (strcmp(p->name, name) == 0) {
-      /* Matching node found. Delete it from the linked list.
-         Deletion from a linked list like this
-   
-             p0 -> p1 -> p2
-         
-         means we have to make p0->next point directly to p2. The p1
-         "node" is removed and free'd.
-         
-         If the node to be deleted is p0, it's a special case. 
-      */
-
-      /* TBD */
-      if(p==base){
-        del=p;
-        p=p->next;
-        base=p;
-        deleted++;
-        free(del);
-      }else{
-        del=p;
-        prev->next=p->next;
-        p=p->next;
-        deleted++;
-        free(del);
-      }
-     
-    }else{
-       prev=p;
-       p=p->next;
-    }
-   
-  }
-  write_all_entries(base);
-  free_entries(base);
-  return deleted;
-}
+  return ret
